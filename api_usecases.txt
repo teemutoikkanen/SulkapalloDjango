@@ -1,0 +1,51 @@
+﻿## ILMOT
+/* Palauttaa kaikki ilmoitukset joita on olemassa (ilmotaulu) */
+http --json GET http://localhost:8000/ilmoitukset/
+
+/* Luo uuden ilmon. Vaan 1 ilmo per käyttäjä kerrallaan eli ei mee läpi jos on jo olemassa oleva */
+http --json POST http://localhost:8000/ilmoitukset/ Authorization:"Token a24224bc91e9fe65f4e3d698aecdca2b90ce9873" 
+title="Eka testi ilmo" time="Ma 26.3. klo 17:00" place="Matinkylä Forever"
+
+/* Hakee käyttäjän luoman ilmon tiedot (jos semmonen on olemassa) tokenin perusteella */
+http --json GET http://localhost:8000/userilmoitukset/ Authorization:"Token a24224bc91e9fe65f4e3d698aecdca2b90ce9873"
+
+/* Poistaa käyttäjän tekemän ilmoituksen. Tokeni riittää koska niitä voi olla vaan yksi per käyttäjä. */
+http --json DELETE http://localhost:8000/userilmoitukset/ Authorization:"Token a24224bc91e9fe65f4e3d698aecdca2b90ce9873"
+
+## HAASTEET
+
+/* Palauttaa listan haasteista, jotka ovat haastaneet tämän käyttäjän ilmon. Palauttaa HTTP_404_NOT_FOUND jos ei löydy*/
+http --json GET http://localhost:8000/haastelista/ Authorization:"Token a24224bc91e9fe65f4e3d698aecdca2b90ce9873"
+
+/* Luo uuden haasteen. URL:ssa pitää antaa ilmon id, jota ollaan haastamassa. */
+http --json POST http://localhost:8000/luohaaste/10 Authorization:"Token a24224bc91e9fe65f4e3d698aecdca2b90ce9873" 
+time="Ma 26.3. klo 17:00" place="Matinkylä Forever"
+
+/* Palauttaa listan kaikista haasteista jotka käyttäjällä on vetämässä/olemassa */
+http --json GET http://localhost:8000/kayttajanhaasteet/ Authorization:"Token a24224bc91e9fe65f4e3d698aecdca2b90ce9873"
+
+/* Poistaa haasteen, jos annetulla ID:llä semmoinen löytyy (ID annetaan osana urlia). Vain haasteen owner voi poistaa haasteen */
+http --json DELETE http://localhost:8000/deletehaaste/1 Authorization:"Token a24224bc91e9fe65f4e3d698aecdca2b90ce9873"
+
+## USER
+
+/* Lista kaikista käyttäjistä. Testailua varten lähinnä. Tästä saa tietysti helposti Ranking listan säätämällä sort_order */
+http --json GET http://localhost:8000/userlist/
+
+/* Luo uuden käyttäjän. Jsonilla pitää vissii kikkailla ton puhelinnumeron kanssa että se hyväksytään. */
+http --form POST http://localhost:8000/register/ username="Teekkari" password="passu" profile.phone="0242424020"
+
+/* Hakee yhden käyttäjän tiedot ID:n perusteella */
+http --json GET http://localhost:8000/users/6
+
+/* Palauttaa tokenin jota tarvitaan toimintojen käyttämiseks */
+http --json POST http://localhost:8000/login/ username="Kimmo" password="Ojala"
+
+
+## MATSI
+
+/* Aloittaa matsin. Käytännössä tää POST tulee silloin ku ilmon tekijä hyväksyy jonku haasteen. Tarvii antaa haaste ID osana urlia. /*
+http --json POST http://localhost:8000/matsi/10 Authorization:"Token a24224bc91e9fe65f4e3d698aecdca2b90ce9873"
+
+/* Lista käyttäjän keskeneräisistä matseista */
+http --json GET http://localhost:8000/kmatsit/ Authorization:"Token a24224bc91e9fe65f4e3d698aecdca2b90ce9873"
